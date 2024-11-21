@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postsync-use-file
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      containers:
+      - name: use-file
+        image: alpine:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            if [ -f /tmp/generated-file.txt ]; then
+              echo "Using the generated file:"
+              cat /tmp/generated-file.txt
+            else
+              echo "File not found!"
+            fi
+      restartPolicy: Never
